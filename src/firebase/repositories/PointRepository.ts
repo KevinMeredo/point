@@ -18,10 +18,31 @@ const finishPoint = async (docId: string, { leftAt, observation }: FinishPointIn
 const findLastPointByEmail = async (userEmail: string) => {
   const emailQuery = query(PointCollection, where("userEmail", "==", userEmail), orderBy("joinedAt", "desc"), limit(1));
   const querySnapshot = await getDocs(emailQuery);
+  console.log(querySnapshot.docs)
   if(querySnapshot.docs[0])
-  return { ...querySnapshot.docs[0].data(), pointId: querySnapshot.docs[0].id } as IPoint;
+    return { ...querySnapshot.docs[0].data(), pointId: querySnapshot.docs[0].id } as IPoint;
   else 
     return undefined;
 };
 
-export { PointCollection, finishPoint, createPoint, findLastPointByEmail };
+const findLastPointsByEmail = async (userEmail: string) => {
+  const emailQuery = query(PointCollection, where("userEmail", "==", userEmail), orderBy("joinedAt", "desc"), limit(4))
+  const querySnapshot = await getDocs(emailQuery);
+
+  if(querySnapshot.docs){
+    const dados: IPoint[] = []
+    querySnapshot.docs.forEach(element => {
+      console.log(element.data())
+      dados.push({...element.data(), pointId: element.id} as IPoint)
+      
+    })
+    
+    return { ...dados }  ;
+  } else {
+    return undefined;
+  }
+};
+
+
+
+export { PointCollection, finishPoint, createPoint, findLastPointByEmail, findLastPointsByEmail };

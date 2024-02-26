@@ -10,12 +10,22 @@ import { BaterPonto } from "@/services/BaterPonto";
 import { useAuthContext } from "@/contexts/Auth";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { findLastPointsByEmail } from "@/firebase/repositories/PointRepository";
+import { IPoint } from "@/@types/Point";
 
 export default function Home() {
   const router = useRouter();
+  let LastPoints: IPoint[] | undefined = [{userEmail: "", pointId:"", leftAt:0, observation:'', joinedAt:{seconds:0}}];
   const { authState, isUserAuthenticated, logOut } = useAuthContext();
   const [observacao, setObservacao] = useState<string | undefined>();
   useEffect(() => {
+    async ()=>{
+      if(authState?.email){
+        LastPoints = await findLastPointsByEmail(authState.email)
+      }
+    } 
+    
+    
     if (isUserAuthenticated) {
       return router.replace("/");
     }
@@ -56,10 +66,11 @@ export default function Home() {
         </form>
         <div className={styles.points}>
           <h1 style={{ fontSize: "16px" }}>Histórico de pontos</h1>
-          <Point />
-          <Point />
-          <Point />
-          <Point />
+          {LastPoints?.map(element => {
+            console.log(element)
+            return <Point/>
+          })}
+      
         </div>
       </div>
     </main >

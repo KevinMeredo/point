@@ -7,7 +7,7 @@ export async function BaterPonto(userEmail: string | undefined, userId: string |
 
   if (userEmail && userId) {
     console.log('bateu')
-    
+
     let LastPoint = await findLastPointByEmail(userEmail);
     
 
